@@ -1,20 +1,17 @@
-package com.ancraz.chatai.ui
+package com.ancraz.chatai.ui.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ancraz.chatai.common.utils.debugLog
 import com.ancraz.chatai.data.AppPrefs
 import com.ancraz.chatai.data.models.MessageDto
-import com.ancraz.chatai.data.models.UserDto
 import com.ancraz.chatai.data.backend.superbase.SupabaseRepository
 import com.ancraz.chatai.domain.repository.AiApiRepository
 import com.ancraz.chatai.domain.useCase.CreateNewUserUseCase
 import com.ancraz.chatai.domain.useCase.GetMessagesUseCase
 import com.ancraz.chatai.domain.useCase.SendUserMessageUseCase
-import com.ancraz.chatai.ui.chat.ChatState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
@@ -13,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.ancraz.chatai.data.AppPrefs
 import com.ancraz.chatai.ui.chat.ChatScreen
+import com.ancraz.chatai.ui.chat.ChatViewModel
 import com.ancraz.chatai.ui.theme.ChatAiTheme
 
 class MainActivity : ComponentActivity() {

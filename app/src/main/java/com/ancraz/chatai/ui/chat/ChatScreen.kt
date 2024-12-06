@@ -1,13 +1,9 @@
 package com.ancraz.chatai.ui.chat
 
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,19 +19,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,22 +36,22 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ancraz.chatai.R
 import com.ancraz.chatai.common.utils.debugLog
 import com.ancraz.chatai.data.models.MessageDto
 import com.ancraz.chatai.ui.theme.BotMessageBoxColor
 import com.ancraz.chatai.ui.theme.ChatAiTheme
 import com.ancraz.chatai.ui.theme.ChatBackgroundColor
 import com.ancraz.chatai.ui.theme.MainTextColor
-import com.ancraz.chatai.ui.theme.MessageTextFieldColor
 import com.ancraz.chatai.ui.theme.MyMessageBoxColor
-import com.ancraz.chatai.ui.theme.TextErrorColor
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -71,15 +62,8 @@ fun ChatScreen(
     messages: List<MessageDto>,
     sendMessage: (String) -> Unit
 ) {
-//    LaunchedEffect(key1 = true) {
-//        viewModel.getChatMessages()
-//    }
 
     debugLog("recompose ChatScreen")
-
-    //val messagesState by viewModel.messageState.collectAsState()
-
-    debugLog("MutableState in ChatScreen: ${messages}")
 
     Column(
         modifier = Modifier
@@ -89,18 +73,58 @@ fun ChatScreen(
             .padding(horizontal = 16.dp)
     ) {
 
-
-        ChatMessagesList(
-            modifier = Modifier.weight(1f),
-            messages = messages
-        )
-
+        if (messages.isNotEmpty()){
+            ChatMessagesList(
+                modifier = Modifier.weight(1f),
+                messages = messages
+            )
+        }
+        else {
+            EmptyMessageListPlaceholder(
+                modifier = Modifier.weight(1f)
+            )
+        }
 
         ChatBox(
             onSendMessage = { messageText ->
                 sendMessage(messageText)
             }
         )
+    }
+}
+
+
+@Composable
+fun EmptyMessageListPlaceholder(
+    modifier: Modifier = Modifier
+){
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(20.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.empty_chat_placeholder),
+                contentDescription = "Chat Icon",
+                tint = Color.White,
+                modifier = Modifier.size(150.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Welcome to ChatAI! \nNo messages in a chat yet. Try ChatAI right now.",
+                color = Color.White,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+
+
     }
 }
 
