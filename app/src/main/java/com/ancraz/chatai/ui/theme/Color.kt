@@ -10,8 +10,12 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val ChatBackgroundColor = Color(0xFF3e3f5d)
-val MyMessageBoxColor = Color(0xFF9a73ea)
-val BotMessageBoxColor = Color(0xFF8289da)
+val ChatBackgroundColor = Color(0xFF1d1a39)//0xFF3e3f5d)
+val MyMessageBoxColor = Color(0xFFfdb096) //FF9a73ea)
+val BotMessageBoxColor = Color(0xFFe5958e) //8289da)
+
+val MainTextColor = Color(0xFF38152b)
+
+val TextErrorColor = Color(0xFFaa0141)
 
 val MessageTextFieldColor = Color(0xFF47476d)

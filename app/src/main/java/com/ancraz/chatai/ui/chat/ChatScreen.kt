@@ -1,8 +1,13 @@
 package com.ancraz.chatai.ui.chat
 
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,29 +19,50 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ancraz.chatai.common.utils.debugLog
 import com.ancraz.chatai.data.models.MessageDto
 import com.ancraz.chatai.ui.theme.BotMessageBoxColor
+import com.ancraz.chatai.ui.theme.ChatAiTheme
 import com.ancraz.chatai.ui.theme.ChatBackgroundColor
+import com.ancraz.chatai.ui.theme.MainTextColor
 import com.ancraz.chatai.ui.theme.MessageTextFieldColor
 import com.ancraz.chatai.ui.theme.MyMessageBoxColor
+import com.ancraz.chatai.ui.theme.TextErrorColor
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -70,7 +96,7 @@ fun ChatScreen(
         )
 
 
-        MessageSenderBlock(
+        ChatBox(
             onSendMessage = { messageText ->
                 sendMessage(messageText)
             }
@@ -89,7 +115,6 @@ fun ChatMessagesList(
 
     LazyColumn(
         modifier = modifier
-            //.weight(1f)
             .fillMaxWidth(),
         reverseLayout = true
     ) {
@@ -107,6 +132,7 @@ fun ChatMessagesList(
                     Alignment.CenterStart
                 },
                 modifier = Modifier
+                    .animateItem()
                     .fillMaxWidth()
             ) {
                 Column(
@@ -151,12 +177,12 @@ fun ChatMessagesList(
                 ) {
                     Text(
                         text = message.message,
-                        color = Color.White
+                        color = MainTextColor
                     )
 
                     Text(
                         text = message.messageTime.toTimeFormat(),
-                        color = Color.White,
+                        color = MainTextColor,
                         modifier = Modifier.align(Alignment.End)
                     )
                 }
@@ -169,51 +195,68 @@ fun ChatMessagesList(
 
 
 @Composable
-fun MessageSenderBlock(
+fun ChatBox(
     onSendMessage: (String) -> Unit
 ) {
-
-    val inputMessageState = remember { mutableStateOf("") }
-    val placeholderTextColor = remember { mutableStateOf(Color.White) }
+    var chatBoxValue by remember { mutableStateOf(TextFieldValue("")) }
+    var hasTextFieldError by remember { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 12.dp)
+        modifier = Modifier.fillMaxWidth()
+            .padding(bottom = 12.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        TextField(
-            value = inputMessageState.value,
-            onValueChange = {
-                inputMessageState.value = it
-            },
-            placeholder = {
-                Text(
-                    text = "Enter a message",
-                    color = placeholderTextColor.value
-                )
-            },
+        OutlinedTextField(
             modifier = Modifier
                 .weight(1f)
-                .background(MessageTextFieldColor)
+                .padding(end = 8.dp)
+                .onFocusChanged {  },
+            value = chatBoxValue,
+            onValueChange = { newText ->
+                hasTextFieldError = false
+                chatBoxValue = newText
+            },
+            maxLines = 1,
+            placeholder = {
+                Text(text = "Message...")
+            },
+            textStyle = TextStyle(color = MainTextColor, fontSize = 16.sp),
+            shape = RoundedCornerShape(16.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = if (hasTextFieldError) Color.Red else MyMessageBoxColor,
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedPlaceholderColor = Color.Gray,
+                cursorColor = MainTextColor,
+
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White
+            ),
+
+            
         )
-
         IconButton(
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = MyMessageBoxColor,
+                contentColor = MainTextColor
+            ),
             onClick = {
-                if (inputMessageState.value.isNotEmpty()) {
-                    onSendMessage(inputMessageState.value)
-
-                    inputMessageState.value = ""
-                    placeholderTextColor.value = Color.White
-                } else {
-                    placeholderTextColor.value = Color.Red
+                if (chatBoxValue.text.isNotEmpty()) {
+                    onSendMessage(chatBoxValue.text)
+                    chatBoxValue = TextFieldValue("")
                 }
+                else {
+                    hasTextFieldError = true
+                }
+            },
+            content = {
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Send message"
+                )
             }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Send,
-                contentDescription = "Send message"
-            )
-        }
+        )
     }
 }
 
@@ -223,4 +266,21 @@ private fun Long.toTimeFormat(): String {
     // Format date to "HH:mm" format
     val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
     return formatter.format(date)
+}
+
+
+@PreviewLightDark
+@Composable
+fun ChatScreenPreview(){
+    ChatAiTheme {
+        ChatScreen(
+            messages = listOf(
+                MessageDto(message = "Hello", messageTime = Calendar.getInstance().timeInMillis, chatId = "1", isBotMessage = false),
+                MessageDto(message = "Hello", messageTime = Calendar.getInstance().timeInMillis, chatId = "1", isBotMessage = true),
+                MessageDto(message = "How are you?", messageTime = Calendar.getInstance().timeInMillis, chatId = "1", isBotMessage = false),
+                MessageDto(message = "I'm fine. And you?", messageTime = Calendar.getInstance().timeInMillis, chatId = "1", isBotMessage = true),
+                MessageDto(message = "Me too.", messageTime = Calendar.getInstance().timeInMillis, chatId = "1", isBotMessage = false)
+            )
+        ) { }
+    }
 }
