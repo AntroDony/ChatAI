@@ -1,11 +1,11 @@
 package com.ancraz.chatai.domain.useCase
 
-import com.ancraz.chatai.data.backend.repository.SupabaseRepositoryImpl
 import com.ancraz.chatai.data.backend.superbase.models.MessageDto
+import com.ancraz.chatai.domain.repository.SupabaseRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetMessagesUseCase(
-    private val supabaseRepository: SupabaseRepositoryImpl
+    private val supabaseRepository: SupabaseRepository
 ) {
 
     fun invoke(userId: String): Flow<List<MessageDto>>{
@@ -13,6 +13,6 @@ class GetMessagesUseCase(
     }
 
     fun startObserveNewMessages(userId: String): Flow<MessageDto>{
-        return supabaseRepository.getRealtimeMessagesByUser(userId)
+        return supabaseRepository.getNewMessageByUser(userId)
     }
 }

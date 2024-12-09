@@ -4,8 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ApiResponseModel(
+data class ChatMessageResponseModel(
 
     @SerialName("messages")
-    val messages: List<ResponseMessage>
+    val messages: List<AiBotMessageModel>
 )

@@ -52,6 +52,7 @@ import com.ancraz.chatai.ui.theme.ChatAiTheme
 import com.ancraz.chatai.ui.theme.ChatBackgroundColor
 import com.ancraz.chatai.ui.theme.MainTextColor
 import com.ancraz.chatai.ui.theme.MyMessageBoxColor
+import com.ancraz.chatai.ui.theme.TextErrorColor
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -60,13 +61,14 @@ import java.util.Locale
 @Composable
 fun ChatScreen(
     messages: List<MessageDto>,
-    sendMessage: (String) -> Unit
+    sendMessage: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     debugLog("recompose ChatScreen")
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .imePadding()
             .background(ChatBackgroundColor)
@@ -130,12 +132,11 @@ fun EmptyMessageListPlaceholder(
 
 
 @Composable
-fun ChatMessagesList(
+private fun ChatMessagesList(
     modifier: Modifier = Modifier,
     messages: List<MessageDto>
 ) {
     debugLog("recompose ChatMessagesList")
-    debugLog("MutableState in ChatMessagesList: ${messages}")
 
     LazyColumn(
         modifier = modifier
@@ -147,79 +148,157 @@ fun ChatMessagesList(
         }
 
         items(messages) { message ->
-            val isOwnMessage = !message.isBotMessage
-
-            Box(
-                contentAlignment = if (isOwnMessage) {
-                    Alignment.CenterEnd
-                } else {
-                    Alignment.CenterStart
-                },
+            MessageItem(
+                message = message,
                 modifier = Modifier
-                    .animateItem()
-                    .fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .width(200.dp)
-                        .drawBehind {
-                            val cornerRadius = 10.dp.toPx()
-                            val triangleHeight = 30.dp.toPx()
-                            val triangleWidth = 25.dp.toPx()
+            )
 
-                            val trianglePath = Path()
-                                .apply {
-                                    if (isOwnMessage) {
-                                        moveTo(size.width, size.height - cornerRadius)
-                                        lineTo(size.width, size.height + triangleHeight)
-                                        lineTo(
-                                            size.width - triangleWidth,
-                                            size.height - cornerRadius
-                                        )
-                                        close()
-                                    } else {
-                                        moveTo(0f, size.height - cornerRadius)
-                                        lineTo(0f, size.height + triangleHeight)
-                                        lineTo(
-                                            triangleWidth,
-                                            size.height - cornerRadius
-                                        )
-                                        close()
-                                    }
-                                }
-
-                            drawPath(
-                                path = trianglePath,
-                                color = if (isOwnMessage) MyMessageBoxColor else BotMessageBoxColor
-                            )
-                        }
-                        .background(
-                            color = if (isOwnMessage) MyMessageBoxColor else BotMessageBoxColor,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .padding(8.dp)
-                ) {
-                    Text(
-                        text = message.message,
-                        color = MainTextColor
-                    )
-
-                    Text(
-                        text = message.messageTime.toTimeFormat(),
-                        color = MainTextColor,
-                        modifier = Modifier.align(Alignment.End)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
+//            val isOwnMessage = !message.isBotMessage
+//
+//            Box(
+//                contentAlignment = if (isOwnMessage) {
+//                    Alignment.CenterEnd
+//                } else {
+//                    Alignment.CenterStart
+//                },
+//                modifier = Modifier
+//                    .animateItem()
+//                    .fillMaxWidth()
+//            ) {
+//                Column(
+//                    modifier = Modifier
+//                        .width(200.dp)
+//                        .drawBehind {
+//                            val cornerRadius = 10.dp.toPx()
+//                            val triangleHeight = 30.dp.toPx()
+//                            val triangleWidth = 25.dp.toPx()
+//
+//                            val trianglePath = Path()
+//                                .apply {
+//                                    if (isOwnMessage) {
+//                                        moveTo(size.width, size.height - cornerRadius)
+//                                        lineTo(size.width, size.height + triangleHeight)
+//                                        lineTo(
+//                                            size.width - triangleWidth,
+//                                            size.height - cornerRadius
+//                                        )
+//                                        close()
+//                                    } else {
+//                                        moveTo(0f, size.height - cornerRadius)
+//                                        lineTo(0f, size.height + triangleHeight)
+//                                        lineTo(
+//                                            triangleWidth,
+//                                            size.height - cornerRadius
+//                                        )
+//                                        close()
+//                                    }
+//                                }
+//
+//                            drawPath(
+//                                path = trianglePath,
+//                                color = if (isOwnMessage) MyMessageBoxColor else BotMessageBoxColor
+//                            )
+//                        }
+//                        .background(
+//                            color = if (isOwnMessage) MyMessageBoxColor else BotMessageBoxColor,
+//                            shape = RoundedCornerShape(10.dp)
+//                        )
+//                        .padding(8.dp)
+//                ) {
+//                    Text(
+//                        text = message.message,
+//                        color = MainTextColor
+//                    )
+//
+//                    Text(
+//                        text = message.messageTime.toTimeFormat(),
+//                        color = MainTextColor,
+//                        modifier = Modifier.align(Alignment.End)
+//                    )
+//                }
+//            }
+//
+//            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
 
+@Composable
+private fun MessageItem(
+    message: MessageDto,
+    modifier: Modifier = Modifier
+){
+    val isOwnMessage = !message.isBotMessage
+
+    Box(
+        contentAlignment = if (isOwnMessage) {
+            Alignment.CenterEnd
+        } else {
+            Alignment.CenterStart
+        },
+        modifier = modifier
+            //.animateItem()
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .width(200.dp)
+                .drawBehind {
+                    val cornerRadius = 10.dp.toPx()
+                    val triangleHeight = 30.dp.toPx()
+                    val triangleWidth = 25.dp.toPx()
+
+                    val trianglePath = Path()
+                        .apply {
+                            if (isOwnMessage) {
+                                moveTo(size.width, size.height - cornerRadius)
+                                lineTo(size.width, size.height + triangleHeight)
+                                lineTo(
+                                    size.width - triangleWidth,
+                                    size.height - cornerRadius
+                                )
+                                close()
+                            } else {
+                                moveTo(0f, size.height - cornerRadius)
+                                lineTo(0f, size.height + triangleHeight)
+                                lineTo(
+                                    triangleWidth,
+                                    size.height - cornerRadius
+                                )
+                                close()
+                            }
+                        }
+
+                    drawPath(
+                        path = trianglePath,
+                        color = if (isOwnMessage) MyMessageBoxColor else BotMessageBoxColor
+                    )
+                }
+                .background(
+                    color = if (isOwnMessage) MyMessageBoxColor else BotMessageBoxColor,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .padding(8.dp)
+        ) {
+            Text(
+                text = message.message,
+                color = MainTextColor
+            )
+
+            Text(
+                text = message.messageTime.toTimeFormat(),
+                color = MainTextColor,
+                modifier = Modifier.align(Alignment.End)
+            )
+        }
+    }
+
+    Spacer(modifier = Modifier.height(32.dp))
+}
+
 
 @Composable
-fun ChatBox(
+private fun ChatBox(
     onSendMessage: (String) -> Unit
 ) {
     var chatBoxValue by remember { mutableStateOf(TextFieldValue("")) }
@@ -249,7 +328,7 @@ fun ChatBox(
             shape = RoundedCornerShape(16.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = if (hasTextFieldError) Color.Red else MyMessageBoxColor,
+                focusedIndicatorColor = if (hasTextFieldError) TextErrorColor else MyMessageBoxColor,
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedPlaceholderColor = Color.Gray,
                 cursorColor = MainTextColor,
@@ -304,7 +383,9 @@ fun ChatScreenPreview(){
                 MessageDto(message = "How are you?", messageTime = Calendar.getInstance().timeInMillis, chatId = "1", isBotMessage = false),
                 MessageDto(message = "I'm fine. And you?", messageTime = Calendar.getInstance().timeInMillis, chatId = "1", isBotMessage = true),
                 MessageDto(message = "Me too.", messageTime = Calendar.getInstance().timeInMillis, chatId = "1", isBotMessage = false)
-            )
-        ) { }
+            ),
+            modifier = Modifier,
+            sendMessage = {}
+        )
     }
 }

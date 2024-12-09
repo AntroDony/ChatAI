@@ -1,11 +1,11 @@
 package com.ancraz.chatai.domain.useCase
 
 import com.ancraz.chatai.common.utils.debugLog
-import com.ancraz.chatai.data.backend.repository.SupabaseRepositoryImpl
 import com.ancraz.chatai.data.backend.superbase.models.UserDto
+import com.ancraz.chatai.domain.repository.SupabaseRepository
 
 class CreateNewUserUseCase(
-    private val supabaseRepository: SupabaseRepositoryImpl
+    private val supabaseRepository: SupabaseRepository
 ) {
 
     suspend fun invoke(userId: String){
@@ -16,7 +16,7 @@ class CreateNewUserUseCase(
                 email = "E-mail",
                 password = "Password"
             )
-            supabaseRepository.insertUser(newUser)
+            supabaseRepository.addNewUser(newUser)
             debugLog("insertUser = ${newUser.chatId}")
         }
     }

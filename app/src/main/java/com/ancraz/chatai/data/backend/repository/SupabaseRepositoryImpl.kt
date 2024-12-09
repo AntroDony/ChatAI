@@ -2,6 +2,7 @@ package com.ancraz.chatai.data.backend.repository
 
 import com.ancraz.chatai.common.utils.debugLog
 import com.ancraz.chatai.data.backend.superbase.SupabaseClient
+import com.ancraz.chatai.data.backend.superbase.models.ActivityDto
 import com.ancraz.chatai.data.backend.superbase.models.MessageDto
 import com.ancraz.chatai.data.backend.superbase.models.UserDto
 import com.ancraz.chatai.domain.repository.SupabaseRepository
@@ -91,6 +92,15 @@ class SupabaseRepositoryImpl: SupabaseRepository {
             catch (e: Exception){
                 debugLog("getRealtimeMessageException: ${e.message}")
             }
+        }
+    }
+
+
+    override fun getActivitiesByUser(userId: String): Flow<ActivityDto> {
+        //TODO("Not yet implemented")
+
+        return flow {
+
         }
     }
 

@@ -4,11 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseMessage(
-
-    @SerialName("role")
-    val role: String,
+data class ChatMessageRequestModel(
 
     @SerialName("content")
-    val content: String?
+    val message: String
 )

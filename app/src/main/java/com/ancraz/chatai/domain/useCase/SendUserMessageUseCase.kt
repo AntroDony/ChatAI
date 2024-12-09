@@ -5,11 +5,13 @@ import com.ancraz.chatai.data.AppPrefs
 import com.ancraz.chatai.data.backend.repository.SupabaseRepositoryImpl
 import com.ancraz.chatai.data.backend.superbase.models.MessageDto
 import com.ancraz.chatai.data.backend.repository.AiApiRepositoryImpl
+import com.ancraz.chatai.domain.repository.AiApiRepository
+import com.ancraz.chatai.domain.repository.SupabaseRepository
 import java.util.Calendar
 
 class SendUserMessageUseCase(
-    private val supabaseRepository: SupabaseRepositoryImpl,
-    private val aiApiRepository: AiApiRepositoryImpl
+    private val supabaseRepository: SupabaseRepository,
+    private val aiApiRepository: AiApiRepository
 ) {
 
     suspend fun invoke(messageText: String){
@@ -17,7 +19,7 @@ class SendUserMessageUseCase(
 
         insertMessageToDb(messageText, chatId, isBot = false)
 
-        val apiResponse = aiApiRepository.getAnswerFromAi(messageText)
+        val apiResponse = aiApiRepository.sendMessageToAi(messageText)
         apiResponse?.let { response ->
             insertMessageToDb(response, chatId, isBot = true)
         } ?: run {
@@ -31,7 +33,7 @@ class SendUserMessageUseCase(
             chatId = chatId,
             isBot = isBot
         )
-        supabaseRepository.insertMessage(messageDto)
+        supabaseRepository.addNewMessage(messageDto)
     }
 
 
