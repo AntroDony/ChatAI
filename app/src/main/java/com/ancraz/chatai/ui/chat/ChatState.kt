@@ -1,6 +1,6 @@
 package com.ancraz.chatai.ui.chat
 
-import com.ancraz.chatai.data.models.MessageDto
+import com.ancraz.chatai.data.backend.superbase.models.MessageDto
 
 
 sealed interface ChatState {

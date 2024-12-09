@@ -1,11 +1,11 @@
 package com.ancraz.chatai.domain.useCase
 
 import com.ancraz.chatai.common.utils.debugLog
-import com.ancraz.chatai.data.backend.superbase.SupabaseRepository
-import com.ancraz.chatai.data.models.UserDto
+import com.ancraz.chatai.data.backend.repository.SupabaseRepositoryImpl
+import com.ancraz.chatai.data.backend.superbase.models.UserDto
 
 class CreateNewUserUseCase(
-    private val supabaseRepository: SupabaseRepository
+    private val supabaseRepository: SupabaseRepositoryImpl
 ) {
 
     suspend fun invoke(userId: String){

@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ancraz.chatai.R
 import com.ancraz.chatai.common.utils.debugLog
-import com.ancraz.chatai.data.models.MessageDto
+import com.ancraz.chatai.data.backend.superbase.models.MessageDto
 import com.ancraz.chatai.ui.theme.BotMessageBoxColor
 import com.ancraz.chatai.ui.theme.ChatAiTheme
 import com.ancraz.chatai.ui.theme.ChatBackgroundColor

@@ -2,14 +2,14 @@ package com.ancraz.chatai.domain.useCase
 
 import com.ancraz.chatai.common.utils.debugLog
 import com.ancraz.chatai.data.AppPrefs
-import com.ancraz.chatai.data.backend.superbase.SupabaseRepository
-import com.ancraz.chatai.data.models.MessageDto
-import com.ancraz.chatai.domain.repository.AiApiRepository
+import com.ancraz.chatai.data.backend.repository.SupabaseRepositoryImpl
+import com.ancraz.chatai.data.backend.superbase.models.MessageDto
+import com.ancraz.chatai.data.backend.repository.AiApiRepositoryImpl
 import java.util.Calendar
 
 class SendUserMessageUseCase(
-    private val supabaseRepository: SupabaseRepository,
-    private val aiApiRepository: AiApiRepository
+    private val supabaseRepository: SupabaseRepositoryImpl,
+    private val aiApiRepository: AiApiRepositoryImpl
 ) {
 
     suspend fun invoke(messageText: String){

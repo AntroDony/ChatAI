@@ -1,8 +1,10 @@
-package com.ancraz.chatai.data.backend.superbase
+package com.ancraz.chatai.data.backend.repository
 
 import com.ancraz.chatai.common.utils.debugLog
-import com.ancraz.chatai.data.models.MessageDto
-import com.ancraz.chatai.data.models.UserDto
+import com.ancraz.chatai.data.backend.superbase.SupabaseClient
+import com.ancraz.chatai.data.backend.superbase.models.MessageDto
+import com.ancraz.chatai.data.backend.superbase.models.UserDto
+import com.ancraz.chatai.domain.repository.SupabaseRepository
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.PostgresAction
@@ -12,25 +14,25 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
 
-class SupabaseRepository() {
+class SupabaseRepositoryImpl: SupabaseRepository {
 
     private val supabaseClient: SupabaseClient by lazy {
         SupabaseClient()
     }
 
-    suspend fun getUsers(): List<UserDto>{
-        val users = supabaseClient.supabase
-            .from("Users")
-            .select()
-            .decodeList<UserDto>()
+//    suspend fun getUsers(): List<UserDto>{
+//        val users = supabaseClient.supabase
+//            .from("Users")
+//            .select()
+//            .decodeList<UserDto>()
+//
+//        debugLog("Users from Supabase: $users")
+//
+//        return users
+//    }
 
-        debugLog("Users from Supabase: $users")
 
-        return users
-    }
-
-
-    suspend fun getUserById(chatId: String): UserDto?{
+    override suspend fun getUserById(chatId: String): UserDto?{
         try {
             val user = supabaseClient.supabase
                 .from("Users")
@@ -53,7 +55,7 @@ class SupabaseRepository() {
     }
 
 
-    fun getMessagesByUser(userId: String): Flow<List<MessageDto>>{
+    override fun getAllMessagesByUser(userId: String): Flow<List<MessageDto>>{
         return flow {
             val messages = supabaseClient.supabase
                 .from("Messages")
@@ -69,13 +71,13 @@ class SupabaseRepository() {
     }
 
 
-    fun getRealtimeMessagesByUser(chatId: String): Flow<MessageDto> {
+    override fun getNewMessageByUser(userId: String): Flow<MessageDto> {
         return flow {
             try {
                 val insertChannel = supabaseClient.supabase.channel("messagesChannel")
                 val dbFlow =  insertChannel.postgresChangeFlow<PostgresAction.Insert>(schema = "public"){
                     table = "Messages"
-                    filter("chat_id", FilterOperator.EQ, chatId)
+                    filter("chat_id", FilterOperator.EQ, userId)
                 }
                 insertChannel.subscribe()
 
@@ -93,7 +95,7 @@ class SupabaseRepository() {
     }
 
 
-    suspend fun insertUser(user: UserDto){
+    override suspend fun addNewUser(user: UserDto){
         try {
             val newUser = supabaseClient.supabase
                 .from("Users")
@@ -110,7 +112,7 @@ class SupabaseRepository() {
     }
 
 
-    suspend fun insertMessage(message: MessageDto){
+    override suspend fun addNewMessage(message: MessageDto){
         try {
             val newMessage = supabaseClient.supabase
                 .from("Messages")

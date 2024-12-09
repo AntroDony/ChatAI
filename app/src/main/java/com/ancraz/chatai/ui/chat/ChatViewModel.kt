@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ancraz.chatai.common.utils.debugLog
 import com.ancraz.chatai.data.AppPrefs
-import com.ancraz.chatai.data.models.MessageDto
-import com.ancraz.chatai.data.backend.superbase.SupabaseRepository
-import com.ancraz.chatai.domain.repository.AiApiRepository
+import com.ancraz.chatai.data.backend.superbase.models.MessageDto
+import com.ancraz.chatai.data.backend.repository.SupabaseRepositoryImpl
+import com.ancraz.chatai.data.backend.repository.AiApiRepositoryImpl
 import com.ancraz.chatai.domain.useCase.CreateNewUserUseCase
 import com.ancraz.chatai.domain.useCase.GetMessagesUseCase
 import com.ancraz.chatai.domain.useCase.SendUserMessageUseCase
@@ -18,14 +18,14 @@ import kotlinx.coroutines.launch
 class ChatViewModel : ViewModel() {
 
     //todo move to DI
-    private val supabaseRepository: SupabaseRepository by lazy {
-        SupabaseRepository()
+    private val supabaseRepository: SupabaseRepositoryImpl by lazy {
+        SupabaseRepositoryImpl()
     }
 
     private val sendMessageUseCase: SendUserMessageUseCase by lazy {
         SendUserMessageUseCase(
             supabaseRepository = supabaseRepository,
-            aiApiRepository = AiApiRepository()
+            aiApiRepository = AiApiRepositoryImpl()
         )
     }
 

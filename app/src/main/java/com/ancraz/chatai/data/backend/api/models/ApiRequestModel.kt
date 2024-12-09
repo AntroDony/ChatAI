@@ -1,4 +1,4 @@
-package com.ancraz.chatai.data.backend.api.model
+package com.ancraz.chatai.data.backend.api.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
